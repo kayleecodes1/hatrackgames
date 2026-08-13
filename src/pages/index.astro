@@ -1,5 +1,32 @@
 ---
+import { Image } from "astro:assets";
+import {
+  siFacebook,
+  siInstagram,
+  siReddit,
+  siTiktok,
+  siX,
+  siYoutube,
+} from "simple-icons";
+
+import background from "../assets/background.png";
+import logo from "../assets/logo.svg";
+import logotype from "../assets/logotype.svg";
+import { siteConfig } from "../config";
+
 const year = new Date().getFullYear();
+const icons = {
+  facebook: siFacebook,
+  instagram: siInstagram,
+  x: siX,
+  youtube: siYoutube,
+  tiktok: siTiktok,
+  reddit: siReddit,
+};
+const socialLinks = siteConfig.socialLinks.map((social) => ({
+  ...social,
+  icon: icons[social.icon],
+}));
 ---
 
 <!doctype html>
@@ -12,48 +39,114 @@ const year = new Date().getFullYear();
       content="Hatrack Games is an independent game studio."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+    />
     <title>Hatrack Games</title>
   </head>
-  <body>
+  <body
+    style={`--page-background: url("${background.src}"); --page-background-width: ${background.width}px; --page-background-height: ${background.height}px;`}
+  >
+    <header>
+      <nav class="social-links" aria-label="Social media">
+        {
+          socialLinks.map(({ label, href, icon }) => (
+            <a href={href} target="_blank" rel="noreferrer" aria-label={label}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d={icon.path} />
+              </svg>
+            </a>
+          ))
+        }
+      </nav>
+    </header>
     <main>
       <section aria-labelledby="studio-name">
-        <h1 id="studio-name">Hatrack Games</h1>
-        <p>Playful indie games full of charm and surprises.</p>
-        <nav aria-label="Company links">
-          <a href="mailto:hello@hatrackgames.com">Contact</a>
-        </nav>
+        <h1 id="studio-name">
+          <Image class="brand-logo" src={logo} alt="" />
+          <Image class="brand-logotype" src={logotype} alt="Hatrack Games" />
+        </h1>
       </section>
     </main>
     <footer>
-      <small>&copy; {year} Hatrack Games LLC</small>
+      <small>
+        <span>{siteConfig.contactEmail}</span>
+        <span class="footer-divider" aria-hidden="true"></span>
+        <span>&copy; {year} Hatrack Games LLC</span>
+      </small>
     </footer>
   </body>
 </html>
 
 <style>
   :global(*) {
+    --color-brand-dark: #222538;
+    --color-brand-mid: #38394d;
+    --color-brand-red: #ef795e;
     box-sizing: border-box;
   }
 
   :global(html) {
     font-family:
-      Inter,
+      "Nunito",
       ui-sans-serif,
       system-ui,
       -apple-system,
       BlinkMacSystemFont,
       "Segoe UI",
       sans-serif;
-    color-scheme: dark;
-    background: #11100f;
-    color: #f5f1e8;
+    color-scheme: light;
+    background: #fdf5f0;
+    color: --color-brand-dark;
   }
 
   :global(body) {
     min-height: 100vh;
     margin: 0;
     display: grid;
-    grid-template-rows: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    background-color: #fdf5f0;
+    background-image: var(--page-background);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: var(--page-background-width) var(--page-background-height);
+  }
+
+  header {
+    padding: 1.5rem 1.5rem 0;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .social-links a {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    border-radius: 50%;
+    color: #9a83bc;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .social-links a:hover,
+  .social-links a:focus-visible {
+    transform: translateY(-2px) scale(1.2);
+  }
+
+  .social-links svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: currentColor;
   }
 
   main {
@@ -65,13 +158,20 @@ const year = new Date().getFullYear();
 
   h1 {
     margin: 0;
-    font-size: clamp(2.5rem, 10vw, 6rem);
-    letter-spacing: -0.06em;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  p {
-    margin: 1rem 0 1.5rem;
-    color: #bdb6a9;
+  .brand-logo {
+    width: min(16rem, 50vw);
+    height: auto;
+  }
+
+  .brand-logotype {
+    width: min(27rem, 80vw);
+    height: auto;
   }
 
   a {
@@ -82,6 +182,22 @@ const year = new Date().getFullYear();
   footer {
     padding: 1.5rem;
     text-align: center;
-    color: #8d877d;
+    font-weight: 700;
+    color: #807885;
+  }
+
+  footer small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .footer-divider {
+    width: 1px;
+    height: 1.5em;
+    background: #dad3d1;
+    opacity: 0.6;
   }
 </style>
